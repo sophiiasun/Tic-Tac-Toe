@@ -13,31 +13,57 @@
 			justify-content: center;
 			align-items: center;
 			margin: 0;
-			background-color: black; 
+			background-color: #767676; 
 		}
-
-        #title{
-            background-color:blue;
-            width: 90vmin;
-            height: 10vmin;
-            display: inline;
-        }
 
 		#game-board {
 			background-color: white;
-			width: 90vmin;
-			height: 90vmin;
+			width: 60vmin;
+			height: 95vmin;
 			display: grid;
-			grid-template-rows: repeat(3, 1fr);
+			grid-template-rows: repeat(5, 1fr);
 			grid-template-columns: repeat(3, 1fr);
-			grid-gap: 1px;
+			grid-gap: 10px;
+			padding: 10px;
+		}
+
+		.label1 {
+			background-color: #b491c8;
+			font-size: 8vmin;
+			font-family: Trebuchet MS;
+			text-align: center;
+			padding-top: 4.2vmin;
+			grid-column: 1 / 4;
+		}
+
+		.label2 {
+			background-color: #b491c8;
+			font-size: 8vmin;
+			font-family: Trebuchet MS;
+			text-align: center;
+			padding-top: 4.2vmin;
+		}
+
+		.label3 {
+			background-color: #b491c8;
+			font-size: 5vmin;
+			font-family: Trebuchet MS;
+			text-align: center;
+			padding-top: 6vmin;
+		}
+
+		.slot {
+			background-color: #bfbebe;
+			font-size: 10vmin;
+			font-family: courier;
+			text-align: center;
+			padding-top: 3.5vmin;
 		}
 	</style>
 </head>
 <body>
 	<p>
 	<div id="game-board"></div>
-    <div id="title"></div>
 	</p>
 </body>
 <script src="script.js"></script>
