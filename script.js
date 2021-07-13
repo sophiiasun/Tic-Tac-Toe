@@ -106,21 +106,27 @@ function displayWin(colour) {
     gameboard[0][0].slotElement.innerHTML = colour + " WINS!"
     if (colour == 'RED') gameboard[4][0].slotElement.innerHTML = ++SCORES[0]
     else gameboard[4][2].slotElement.innerHTML = ++SCORES[1]
-    disableGame()
+    setTimeout(disableGame(), 3000)
     resetGame()
 }
 
 function disableGame() {
-    gameboard.forEach(row => {
-        row.forEach(slot => {
-            slot.slotElement.style.pointerEvents = 'none'
-        })
-    })
+    for (var r = 1; r < 4; r++) {
+        for (var c = 0; c < 3; c++) {
+            oldSlot = gameboard[r][c].slotElement
+            newSlot = document.createElement('div')
+            newSlot.classList.add("slot")
+            newSlot.style.backgroundColor = oldSlot.style.backgroundColor
+            oldSlot.parentNode.replaceChild(newSlot, oldSlot);
+        }
+    }
 }
+
 
 function resetGame() {
     data = [[], [], [], [], []]
     currentPlayer = (SCORES[0] + SCORES[1]) % 2
+
 }
 
 
