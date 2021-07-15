@@ -70,9 +70,9 @@ function createBoard() {
 
 function displayText() {
     gameboard[0][0].slotElement.innerHTML = 'TIC TAC TOE'
-    gameboard[4][0].slotElement.innerHTML = '0'
+    gameboard[4][0].slotElement.innerHTML = SCORES[0]
     gameboard[4][1].slotElement.innerHTML = 'SCORE'
-    gameboard[4][2].slotElement.innerHTML = '0'
+    gameboard[4][2].slotElement.innerHTML = SCORES[1]
 }
  
 function on_click(slot) {
@@ -106,27 +106,39 @@ function displayWin(colour) {
     gameboard[0][0].slotElement.innerHTML = colour + " WINS!"
     if (colour == 'RED') gameboard[4][0].slotElement.innerHTML = ++SCORES[0]
     else gameboard[4][2].slotElement.innerHTML = ++SCORES[1]
-    setTimeout(disableGame(), 3000)
+    disableGame()
     resetGame()
 }
 
 function disableGame() {
-    for (var r = 1; r < 4; r++) {
-        for (var c = 0; c < 3; c++) {
-            oldSlot = gameboard[r][c].slotElement
-            newSlot = document.createElement('div')
-            newSlot.classList.add("slot")
-            newSlot.style.backgroundColor = oldSlot.style.backgroundColor
-            oldSlot.parentNode.replaceChild(newSlot, oldSlot);
+    // setTimeout(function() {
+        for (var r = 1; r < 4; r++) {
+            for (var c = 0; c < 3; c++) {
+                oldSlot = gameboard[r][c].slotElement
+                newSlot = document.createElement('div')
+                newSlot.classList.add("slot")
+                newSlot.style.backgroundColor = oldSlot.style.backgroundColor
+                oldSlot.parentNode.replaceChild(newSlot, oldSlot);
+                gameboard[r][c].slotElement = newSlot
+            }
         }
-    }
+    // }, 3000);
 }
 
+function removeElements() {
+    gameboard.forEach(row => {
+        row.forEach(slot => {
+            slot.slotElement.remove()
+        })
+    })
+    gameboard = []
+}
 
 function resetGame() {
     data = [[], [], [], [], []]
     currentPlayer = (SCORES[0] + SCORES[1]) % 2
-
+    removeElements()
+    createBoard()
+    displayText()
 }
-
 
