@@ -83,13 +83,14 @@ function on_click(slot) {
         data[R][C] = PLAYERS[currentPlayer]
         slotCounter++
         var condition = checkWin()
-        if (condition == 'RED' || condition == 'BLUE') displayWin(condition)
+        if (condition == 'RED' || condition == 'BLUE') {
+            displayWin(condition)
+        }
         currentPlayer = (currentPlayer + 1) % 2
     }
 }
 
 function checkWin() {
-    // alert("checking")
     for (var r = 1; r < 4; r++) { // horizontals
         if (data[r][0] == data[r][1] && data[r][1] == data[r][2]) return data[r][0]
     }
@@ -110,19 +111,25 @@ function displayWin(colour) {
     resetGame()
 }
 
+function wait(ms){
+    var start = new Date().getTime();
+    var end = start;
+    while(end < start + ms) {
+      end = new Date().getTime();
+   }
+ }
+
 function disableGame() {
-    // setTimeout(function() {
-        for (var r = 1; r < 4; r++) {
-            for (var c = 0; c < 3; c++) {
-                oldSlot = gameboard[r][c].slotElement
-                newSlot = document.createElement('div')
-                newSlot.classList.add("slot")
-                newSlot.style.backgroundColor = oldSlot.style.backgroundColor
-                oldSlot.parentNode.replaceChild(newSlot, oldSlot);
-                gameboard[r][c].slotElement = newSlot
-            }
+    for (var r = 1; r < 4; r++) {
+        for (var c = 0; c < 3; c++) {
+            oldSlot = gameboard[r][c].slotElement
+            newSlot = document.createElement('div')
+            newSlot.classList.add("slot")
+            newSlot.style.backgroundColor = oldSlot.style.backgroundColor
+            oldSlot.parentNode.replaceChild(newSlot, oldSlot);
+            gameboard[r][c].slotElement = newSlot
         }
-    // }, 3000);
+    }
 }
 
 function removeElements() {
