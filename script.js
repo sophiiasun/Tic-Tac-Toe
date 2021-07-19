@@ -70,9 +70,9 @@ function createBoard() {
 
 function displayText() {
     gameboard[0][0].slotElement.innerHTML = 'TIC TAC TOE'
-    gameboard[4][0].slotElement.innerHTML = SCORES[0]
+    gameboard[4][0].slotElement.innerHTML = '0'
     gameboard[4][1].slotElement.innerHTML = 'SCORE'
-    gameboard[4][2].slotElement.innerHTML = SCORES[1]
+    gameboard[4][2].slotElement.innerHTML = '0'
 }
  
 function on_click(slot) {
@@ -107,7 +107,7 @@ function displayWin(colour) {
     gameboard[0][0].slotElement.innerHTML = colour + " WINS!"
     if (colour == 'RED') gameboard[4][0].slotElement.innerHTML = ++SCORES[0]
     else gameboard[4][2].slotElement.innerHTML = ++SCORES[1]
-    disableGame()
+    setTimeout(disableGame(), 3000)
     resetGame()
 }
 
@@ -127,25 +127,19 @@ function disableGame() {
             newSlot.classList.add("slot")
             newSlot.style.backgroundColor = oldSlot.style.backgroundColor
             oldSlot.parentNode.replaceChild(newSlot, oldSlot);
+<<<<<<< HEAD
             gameboard[r][c].slotElement = newSlot
+=======
+>>>>>>> parent of 0a7bdd9 (only thing left: sleep)
         }
     }
 }
 
-function removeElements() {
-    gameboard.forEach(row => {
-        row.forEach(slot => {
-            slot.slotElement.remove()
-        })
-    })
-    gameboard = []
-}
 
 function resetGame() {
     data = [[], [], [], [], []]
     currentPlayer = (SCORES[0] + SCORES[1]) % 2
-    removeElements()
-    createBoard()
-    displayText()
+
 }
+
 
