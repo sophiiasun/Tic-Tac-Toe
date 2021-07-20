@@ -70,27 +70,30 @@ function createBoard() {
 
 function displayText() {
     gameboard[0][0].slotElement.innerHTML = 'TIC TAC TOE'
-    gameboard[4][0].slotElement.innerHTML = '0'
+    gameboard[4][0].slotElement.innerHTML = SCORES[0]
     gameboard[4][1].slotElement.innerHTML = 'SCORE'
-    gameboard[4][2].slotElement.innerHTML = '0'
+    gameboard[4][2].slotElement.innerHTML = SCORES[1]
 }
- 
+
 function on_click(slot) {
     const slotElement = slot.slotElement
     var R = slot.r, C = slot.c
-    if (data[R][C] != 'X' && data[R][C] != 'O') {
+    if (data[R][C] != 'RED' && data[R][C] != 'BLUE') {
         slotElement.style.backgroundColor = COLOURS[currentPlayer]
         data[R][C] = PLAYERS[currentPlayer]
         slotCounter++
-        var condition = checkWin()
-        if (condition == 'RED' || condition == 'BLUE') {
-            displayWin(condition)
-        }
-        currentPlayer = (currentPlayer + 1) % 2
+        setTimeout(function() {
+            var condition = checkWin()
+            if (condition == 'RED' || condition == 'BLUE') displayWin(condition)
+            if (condition == 'Tie') displayTie()
+            currentPlayer = (currentPlayer + 1) % 2
+        })
+        
     }
 }
 
 function checkWin() {
+    // alert("checking")
     for (var r = 1; r < 4; r++) { // horizontals
         if (data[r][0] == data[r][1] && data[r][1] == data[r][2]) return data[r][0]
     }
@@ -103,11 +106,15 @@ function checkWin() {
     return 'NONE'
 }
 
+function displayTie() {
+
+}
+
 function displayWin(colour) {
     gameboard[0][0].slotElement.innerHTML = colour + " WINS!"
     if (colour == 'RED') gameboard[4][0].slotElement.innerHTML = ++SCORES[0]
     else gameboard[4][2].slotElement.innerHTML = ++SCORES[1]
-    setTimeout(disableGame(), 3000)
+    disableGame()
     resetGame()
 }
 
@@ -120,6 +127,7 @@ function wait(ms){
  }
 
 function disableGame() {
+    wait(2000)
     for (var r = 1; r < 4; r++) {
         for (var c = 0; c < 3; c++) {
             oldSlot = gameboard[r][c].slotElement
@@ -127,14 +135,24 @@ function disableGame() {
             newSlot.classList.add("slot")
             newSlot.style.backgroundColor = oldSlot.style.backgroundColor
             oldSlot.parentNode.replaceChild(newSlot, oldSlot);
+            gameboard[r][c].slotElement = newSlot
         }
     }
+}
+
+function removeElements() {
+    gameboard.forEach(row => {
+        row.forEach(slot => {
+            slot.slotElement.remove()
+        })
+    })
+    gameboard = []
 }
 
 function resetGame() {
     data = [[], [], [], [], []]
     currentPlayer = (SCORES[0] + SCORES[1]) % 2
-
+    removeElements()
+    createBoard()
+    displayText()
 }
-
-
