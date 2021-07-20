@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Tic Tac Toe</title>
+	<style>
+		body {
+			min-height: 100vh;
+			width: 100vw;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			margin: 0;
+			background-color: #767676; 
+		}
+
+		#game-board {
+			background-color: white;
+			width: 60vmin;
+			height: 95vmin;
+			display: grid;
+			grid-template-rows: repeat(5, 1fr);
+			grid-template-columns: repeat(3, 1fr);
+			grid-gap: 10px;
+			padding: 10px;
+		}
+
+		.label1 {
+			background-color: #b491c8;
+			font-size: 8vmin;
+			font-family: Trebuchet MS;
+			text-align: center;
+			padding-top: 4.2vmin;
+			grid-column: 1 / 4;
+		}
+
+		.label2 {
+			background-color: #b491c8;
+			font-size: 8vmin;
+			font-family: Trebuchet MS;
+			text-align: center;
+			padding-top: 4.2vmin;
+		}
+
+		.label3 {
+			background-color: #b491c8;
+			font-size: 5vmin;
+			font-family: Trebuchet MS;
+			text-align: center;
+			padding-top: 6vmin;
+		}
+
+		.slot {
+			background-color: #bfbebe;
+			font-size: 10vmin;
+			font-family: courier;
+			text-align: center;
+			padding-top: 3.5vmin;
+		}
+	</style>
+</head>
+<body>
+	<p>
+	<div id="game-board"></div>
+	</p>
+</body>
+<script src="script2.js"></script>
+</html>
