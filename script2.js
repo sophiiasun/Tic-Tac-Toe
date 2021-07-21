@@ -3,21 +3,21 @@ const GAME_BOARD = document.getElementById("game-board")
 const COLOURS = ['#dc143c', '#009dff']
 const PLAYERS = ['RED', 'BLUE']
 var SCORES = [0, 0]
-var currentPlayer
+var currentPlayer, humanPlayer
 
 let gameboard = []
-let data = [[], [], [], [], []]
-let winStatus = [8]
+let data = [['', '', ''], ['', '', ''], ['', '', ''], ['', '', ''], ['', '', '']]
 var slotCounter = 0
 
 main()
 function main() {
-    currentPlayer = 0
+    currentPlayer = humanPlayer = 0
     createBoard()
     displayText()
 }
 
 function createBoard() {
+    gameboard = []
     for (var r = 0; r < 5; r++) {
         let row = []
         if (r == 0) {
@@ -65,7 +65,6 @@ function createBoard() {
             counter++
         })
     })
-    for (var i = 0; i < 5; i++) data[i] = []
 }
 
 function displayText() {
@@ -78,44 +77,76 @@ function displayText() {
 function on_click(slot) {
     const slotElement = slot.slotElement
     var R = slot.r, C = slot.c
-    if (data[R][C] != 'RED' && data[R][C] != 'BLUE') {
+    if (isEmpty(R, C) && currentPlayer == humanPlayer) {
         slotElement.style.backgroundColor = COLOURS[currentPlayer]
         data[R][C] = PLAYERS[currentPlayer]
         slotCounter++
-        setTimeout(function() {
-            var condition = checkWin()
-            if (condition == 'RED' || condition == 'BLUE') displayWin(condition)
-            if (condition == 'Tie') displayTie()
-            currentPlayer = (currentPlayer + 1) % 2
-        })
-        
+        currentPlayer = (currentPlayer + 1) % 2
+        endGame(checkWin())
     }
+}
+
+function getCompMove() { // using minimax algo
+    var bestScore = -Infinity, move 
+    for (var r = 1; r < 4; r++) {
+        for (var c = 0; c < 3; c++) {
+            if (!isEmpty(r, c)) continue
+            data[r][c] = PLAYERS[currentPlayer]
+            var score = minimax()
+            data[r][c] = ""
+            if (score > bestScore) {
+                bestScore = score
+                move = {r, c}
+            }
+        }
+    }
+    data[move.r][move.c] = PLAYERS[currentPlayer]
+    gameboard[move.r][move.c].tileElement.style.backgroundColor = COLOURS[currentPlayer]
+    slotCounter++
+    currentPlayer = (currentPlayer + 1) % 2
+    endGame(checkWin())
+}
+
+function minimax() {
+    return 1
+}
+
+function isEmpty(row, col) {
+    return data[row][col] == ""
 }
 
 function checkWin() {
-    // alert("checking")
     for (var r = 1; r < 4; r++) { // horizontals
-        if (data[r][0] == data[r][1] && data[r][1] == data[r][2]) return data[r][0]
+        if (data[r][0] == data[r][1] && data[r][1] == data[r][2] && data[r][0] != "") return data[r][0]
     }
-    if (data[1][0] == data[2][1] && data[2][1] == data[3][2]) return data[1][0]
-    if (data[1][2] == data[2][1] && data[2][1] == data[3][0]) return data[1][2]
+    if (data[1][0] == data[2][1] && data[2][1] == data[3][2] && data[1][0] != "") return data[1][0]
+    if (data[1][2] == data[2][1] && data[2][1] == data[3][0] && data[1][2] != "") return data[1][2]
     for (var c = 0; c < 3; c++) { // verticals
-        if (data[1][c] == data[2][c] && data[2][c] == data[3][c]) return data[1][c]
+        if (data[1][c] == data[2][c] && data[2][c] == data[3][c] && data[1][c] != "") return data[1][c]
     }
-    if (slotCounter == 9) return 'Tie'
+    if (slotCounter == 9) return 'TIE'
     return 'NONE'
 }
 
-function displayTie() {
+function endGame(condition) {
+    if (condition != 'RED' && condition != 'BLUE' && condition != 'TIE') {
+        window.setTimeout(getCompMove(), 1500)
+        return
+    }
+    if (condition == 'RED' || condition == 'BLUE') displayWin(condition)
+    if (condition == 'TIE') displayTie()
+    on()
+    window.setTimeout(off, 1500);
+}
 
+function displayTie() {
+    gameboard[0][0].slotElement.innerHTML = "TIE!"
 }
 
 function displayWin(colour) {
     gameboard[0][0].slotElement.innerHTML = colour + " WINS!"
     if (colour == 'RED') gameboard[4][0].slotElement.innerHTML = ++SCORES[0]
     else gameboard[4][2].slotElement.innerHTML = ++SCORES[1]
-    disableGame()
-    resetGame()
 }
 
 function wait(ms){
@@ -127,17 +158,7 @@ function wait(ms){
  }
 
 function disableGame() {
-    wait(2000)
-    for (var r = 1; r < 4; r++) {
-        for (var c = 0; c < 3; c++) {
-            oldSlot = gameboard[r][c].slotElement
-            newSlot = document.createElement('div')
-            newSlot.classList.add("slot")
-            newSlot.style.backgroundColor = oldSlot.style.backgroundColor
-            oldSlot.parentNode.replaceChild(newSlot, oldSlot);
-            gameboard[r][c].slotElement = newSlot
-        }
-    }
+    document.getElementById("overlay").style.display = "block";
 }
 
 function removeElements() {
@@ -146,13 +167,28 @@ function removeElements() {
             slot.slotElement.remove()
         })
     })
-    gameboard = []
 }
 
 function resetGame() {
     data = [[], [], [], [], []]
     currentPlayer = (SCORES[0] + SCORES[1]) % 2
+    slotCounter = 0
+    humanPlayer = (humanPlayer + 1) % 2
     removeElements()
     createBoard()
     displayText()
+    document.getElementById("overlay").style.display = "none";
+}
+
+function stopProp(event) {
+    event.stopPropagation();
+}
+
+function on() {
+    document.getElementById("overlay").style.display = "block";
+}
+
+function off() {
+    document.getElementById("overlay").style.display = "none";
+    resetGame()
 }
