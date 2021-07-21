@@ -82,11 +82,23 @@ function on_click(slot) {
         data[R][C] = PLAYERS[currentPlayer]
         slotCounter++
         currentPlayer = (currentPlayer + 1) % 2
-        endGame(checkWin())
+        var condition = checkWin()
+        if (condition != 'RED' && condition != 'BLUE' && condition != 'TIE') {
+            on()
+            setTimeout(getCompMove(), 1000)
+            condition = checkWin()
+            if (condition != 'RED' && condition != 'BLUE' && condition != 'TIE') return
+        }
+        if (condition == 'RED' || condition == 'BLUE') displayWin(condition)
+        else if (condition == 'TIE') displayTie()
+        on()
+        window.setTimeout(off, 1500)
+        resetGame()
     }
 }
 
 function getCompMove() { // using minimax algo
+    off()
     var bestScore = -Infinity, move 
     for (var r = 1; r < 4; r++) {
         for (var c = 0; c < 3; c++) {
@@ -101,10 +113,9 @@ function getCompMove() { // using minimax algo
         }
     }
     data[move.r][move.c] = PLAYERS[currentPlayer]
-    gameboard[move.r][move.c].tileElement.style.backgroundColor = COLOURS[currentPlayer]
+    gameboard[move.r][move.c].slotElement.style.backgroundColor = COLOURS[currentPlayer]
     slotCounter++
     currentPlayer = (currentPlayer + 1) % 2
-    endGame(checkWin())
 }
 
 function minimax() {
@@ -126,17 +137,6 @@ function checkWin() {
     }
     if (slotCounter == 9) return 'TIE'
     return 'NONE'
-}
-
-function endGame(condition) {
-    if (condition != 'RED' && condition != 'BLUE' && condition != 'TIE') {
-        window.setTimeout(getCompMove(), 1500)
-        return
-    }
-    if (condition == 'RED' || condition == 'BLUE') displayWin(condition)
-    if (condition == 'TIE') displayTie()
-    on()
-    window.setTimeout(off, 1500);
 }
 
 function displayTie() {
@@ -190,5 +190,4 @@ function on() {
 
 function off() {
     document.getElementById("overlay").style.display = "none";
-    resetGame()
 }
