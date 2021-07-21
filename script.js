@@ -6,7 +6,7 @@ var SCORES = [0, 0]
 var currentPlayer
 
 let gameboard = []
-let data = [[], [], [], [], []]
+let data = [['', '', ''], ['', '', ''], ['', '', ''], ['', '', ''], ['', '', '']]
 var slotCounter = 0
 
 main()
@@ -86,22 +86,19 @@ function on_click(slot) {
         if (condition != 'RED' && condition != 'BLUE' && condition != 'TIE') return
         if (condition == 'RED' || condition == 'BLUE') displayWin(condition)
         if (condition == 'TIE') displayTie()
-        disableGame()
-        setTimeout(function() {
-            wait(2000)
-            resetGame()
-        })
+        on()
+        window.setTimeout(off, 1500);
     }
 }
 
 function checkWin() {
     for (var r = 1; r < 4; r++) { // horizontals
-        if (data[r][0] == data[r][1] && data[r][1] == data[r][2]) return data[r][0]
+        if (data[r][0] == data[r][1] && data[r][1] == data[r][2] && data[r][0] != "") return data[r][0]
     }
-    if (data[1][0] == data[2][1] && data[2][1] == data[3][2]) return data[1][0]
-    if (data[1][2] == data[2][1] && data[2][1] == data[3][0]) return data[1][2]
+    if (data[1][0] == data[2][1] && data[2][1] == data[3][2] && data[1][0] != "") return data[1][0]
+    if (data[1][2] == data[2][1] && data[2][1] == data[3][0] && data[1][2] != "") return data[1][2]
     for (var c = 0; c < 3; c++) { // verticals
-        if (data[1][c] == data[2][c] && data[2][c] == data[3][c]) return data[1][c]
+        if (data[1][c] == data[2][c] && data[2][c] == data[3][c] && data[1][c] != "") return data[1][c]
     }
     if (slotCounter == 9) return 'TIE'
     return 'NONE'
@@ -126,16 +123,7 @@ function wait(ms){
  }
 
 function disableGame() {
-    for (var r = 1; r < 4; r++) {
-        for (var c = 0; c < 3; c++) {
-            var oldSlot = gameboard[r][c].slotElement
-            var newSlot = document.createElement('div')
-            newSlot.classList.add("slot")
-            newSlot.style.backgroundColor = oldSlot.style.backgroundColor
-            oldSlot.parentNode.replaceChild(newSlot, oldSlot);
-            gameboard[r][c].slotElement = newSlot
-        }
-    }
+    document.getElementById("overlay").style.display = "block";
 }
 
 function removeElements() {
@@ -153,4 +141,18 @@ function resetGame() {
     removeElements()
     createBoard()
     displayText()
+    document.getElementById("overlay").style.display = "none";
+}
+
+function stopProp(event) {
+    event.stopPropagation();
+}
+
+function on() {
+    document.getElementById("overlay").style.display = "block";
+}
+
+function off() {
+    document.getElementById("overlay").style.display = "none";
+    resetGame()
 }
