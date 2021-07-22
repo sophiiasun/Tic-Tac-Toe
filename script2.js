@@ -4,6 +4,7 @@ const COLOURS = ['#dc143c', '#009dff']
 const PLAYERS = ['RED', 'BLUE']
 var SCORES = [0, 0]
 var currentPlayer, humanPlayer
+var offType = ""
 
 let gameboard = []
 let data = [['', '', ''], ['', '', ''], ['', '', ''], ['', '', ''], ['', '', '']]
@@ -75,7 +76,6 @@ function displayText() {
 }
 
 function on_click(slot) {
-    slot.slotElement.style.backgroundColor = COLOURS[currentPlayer]
     on()
     const slotElement = slot.slotElement
     var R = slot.r, C = slot.c
@@ -86,10 +86,10 @@ function on_click(slot) {
         currentPlayer = (currentPlayer + 1) % 2
         var condition = checkWin()
         if (condition != 'RED' && condition != 'BLUE' && condition != 'TIE')
-            window.setTimeout(getCompMove, 750)
+            window.setTimeout(getCompMove, 600)
         else
             gameOver(condition)
-    }
+    } else off()
 }
 
 function getCompMove() { // using minimax algo
@@ -111,7 +111,7 @@ function getCompMove() { // using minimax algo
     slotCounter++
     currentPlayer = (currentPlayer + 1) % 2
     var condition = checkWin()
-    if (condition != 'RED' && condition != 'BLUE' && condition != 'TIE') off("")
+    if (condition != 'RED' && condition != 'BLUE' && condition != 'TIE') off()
     else gameOver(condition)
 }
 
@@ -127,7 +127,8 @@ function gameOver(condition) {
     if (condition == 'RED' || condition == 'BLUE') displayWin(condition)
     if (condition == 'TIE') displayTie()
     on()
-    window.setTimeout(off("RESTART"), 1500);
+    offType = "RESTART"
+    window.setTimeout(off, 1500);
 }
 
 function checkWin() {
@@ -177,6 +178,7 @@ function resetGame() {
     data = [['', '', ''], ['', '', ''], ['', '', ''], ['', '', ''], ['', '', '']]
     currentPlayer = (SCORES[0] + SCORES[1]) % 2
     slotCounter = 0
+    offType = ""
     removeElements()
     createBoard()
     displayText()
@@ -194,7 +196,7 @@ function on() {
     document.getElementById("overlay").style.display = "block";
 }
 
-function off(type) {
+function off() {
     document.getElementById("overlay").style.display = "none";
-    if (type == "RESTART") resetGame()
+    if (offType == "RESTART") resetGame()
 }
