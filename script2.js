@@ -3,18 +3,27 @@ const GAME_BOARD = document.getElementById("game-board")
 const COLOURS = ['#dc143c', '#009dff']
 const PLAYERS = ['RED', 'BLUE']
 var SCORES = [0, 0]
-var currentPlayer, humanPlayer
+var currentPlayer, humanPlayer, compPlayer, startingPlayer
 var offType = ""
+var roundNumber = 1
 
 let gameboard = []
 let data = [['', '', ''], ['', '', ''], ['', '', ''], ['', '', ''], ['', '', '']]
 var slotCounter = 0
 
+let minimaxScore = {
+    RED: 10,
+    BLUE: -10,
+    TIE: 0
+}
+
 main()
 function main() {
-    currentPlayer = humanPlayer = 0
+    currentPlayer = compPlayer = startingPlayer = 0
+    humanPlayer = 1
     createBoard()
     displayText()
+    getCompMove()
 }
 
 function createBoard() {
@@ -86,26 +95,14 @@ function on_click(slot) {
         currentPlayer = (currentPlayer + 1) % 2
         var condition = checkWin()
         if (condition != 'RED' && condition != 'BLUE' && condition != 'TIE')
-            window.setTimeout(getCompMove, 600)
+            window.setTimeout(getCompMove, 500)
         else
             gameOver(condition)
     } else off()
 }
 
 function getCompMove() { // using minimax algo
-    var bestScore = -Infinity, move 
-    for (var r = 1; r < 4; r++) {
-        for (var c = 0; c < 3; c++) {
-            if (!isEmpty(r, c)) continue
-            data[r][c] = PLAYERS[currentPlayer]
-            var score = minimax()
-            data[r][c] = ""
-            if (score > bestScore) {
-                bestScore = score
-                move = {r, c}
-            }
-        }
-    }
+    let move = getBestMove()
     data[move.r][move.c] = PLAYERS[currentPlayer]
     gameboard[move.r][move.c].slotElement.style.backgroundColor = COLOURS[currentPlayer]
     slotCounter++
@@ -115,8 +112,52 @@ function getCompMove() { // using minimax algo
     else gameOver(condition)
 }
 
-function minimax() {
-    return 1
+function getBestMove() {
+    var bestScore = -1000
+    let move
+    for (var r = 1; r < 4; r++) {
+        for (var c = 0; c < 3; c++) {
+            if (!isEmpty(r, c)) continue
+            data[r][c] = PLAYERS[compPlayer]
+            let score = minimax(data, 0, false)
+            data[r][c] = ""
+            if (score > bestScore) {
+                bestScore = score
+                move = {r, c}
+            }
+        }
+    }
+    return move
+}
+
+function minimax(data, depth, isMaximizing) {
+    let result = checkWin()
+    if (result != "NONE") return minimaxScore[result]
+    if (isMaximizing) {
+        let bestScore = -1000
+        for (var r = 1; r < 4; r++) {
+            for (var c = 0; c < 3; c++) {
+                if (data[r][c] != '') continue
+                data[r][c] = PLAYERS[compPlayer]
+                let score = minimax(data, depth + 1, false)
+                data[r][c] = ''
+                bestScore = Math.max(score, bestScore)
+            }
+        }
+        return bestScore
+    } else {
+        let bestScore = 1000
+        for (var r = 1; r < 4; r++) {
+            for (var c = 0; c < 3; c++) {
+                if (data[r][c] != '') continue
+                data[r][c] = PLAYERS[humanPlayer]
+                let score = minimax(data, depth + 1, true)
+                data[r][c] = ''
+                bestScore = Math.min(score, bestScore)
+            }
+        }
+        return bestScore
+    }
 }
 
 function isEmpty(row, col) {
@@ -140,8 +181,13 @@ function checkWin() {
     for (var c = 0; c < 3; c++) { // verticals
         if (data[1][c] == data[2][c] && data[2][c] == data[3][c] && data[1][c] != "") return data[1][c]
     }
-    if (slotCounter == 9) return 'TIE'
-    return 'NONE'
+    for (var r = 1; r < 4; r++) {
+        for (var c = 0; c < 3; c++) {
+            if (data[r][c] == '')
+                return 'NONE'
+        }
+    }
+    return 'TIE'
 }
 
 function displayTie() {
@@ -176,15 +222,18 @@ function removeElements() {
 
 function resetGame() {
     data = [['', '', ''], ['', '', ''], ['', '', ''], ['', '', ''], ['', '', '']]
-    currentPlayer = (SCORES[0] + SCORES[1]) % 2
+    currentPlayer = roundNumber % 2
+    startingPlayer = currentPlayer
     slotCounter = 0
     offType = ""
     removeElements()
     createBoard()
     displayText()
-    document.getElementById("overlay").style.display = "none";
-    if (currentPlayer != humanPlayer) 
+    if (currentPlayer != humanPlayer) {
+        on()
         window.setTimeout(getCompMove, 1000)
+    }
+    roundNumber++
 }
 
 function stopProp(event) {
