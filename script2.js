@@ -183,9 +183,8 @@ function resetGame() {
     createBoard()
     displayText()
     document.getElementById("overlay").style.display = "none";
-    if (currentPlayer != humanPlayer) {
-        // alert("bot")
-    }
+    if (currentPlayer != humanPlayer) 
+        window.setTimeout(getCompMove, 1000)
 }
 
 function stopProp(event) {
