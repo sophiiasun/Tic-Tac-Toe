@@ -135,7 +135,7 @@ function removeElements() {
 }
 
 function resetGame() {
-    let data = [['', '', ''], ['', '', ''], ['', '', ''], ['', '', ''], ['', '', '']]
+    data = [['', '', ''], ['', '', ''], ['', '', ''], ['', '', ''], ['', '', '']]
     currentPlayer = (SCORES[0] + SCORES[1]) % 2
     slotCounter = 0
     removeElements()

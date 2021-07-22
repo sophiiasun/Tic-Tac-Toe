@@ -75,6 +75,8 @@ function displayText() {
 }
 
 function on_click(slot) {
+    slot.slotElement.style.backgroundColor = COLOURS[currentPlayer]
+    on()
     const slotElement = slot.slotElement
     var R = slot.r, C = slot.c
     if (isEmpty(R, C) && currentPlayer == humanPlayer) {
@@ -83,22 +85,14 @@ function on_click(slot) {
         slotCounter++
         currentPlayer = (currentPlayer + 1) % 2
         var condition = checkWin()
-        if (condition != 'RED' && condition != 'BLUE' && condition != 'TIE') {
-            on()
-            setTimeout(getCompMove(), 1000)
-            condition = checkWin()
-            if (condition != 'RED' && condition != 'BLUE' && condition != 'TIE') return
-        }
-        if (condition == 'RED' || condition == 'BLUE') displayWin(condition)
-        else if (condition == 'TIE') displayTie()
-        on()
-        window.setTimeout(off, 1500)
-        resetGame()
+        if (condition != 'RED' && condition != 'BLUE' && condition != 'TIE')
+            window.setTimeout(getCompMove, 750)
+        else
+            gameOver(condition)
     }
 }
 
 function getCompMove() { // using minimax algo
-    off()
     var bestScore = -Infinity, move 
     for (var r = 1; r < 4; r++) {
         for (var c = 0; c < 3; c++) {
@@ -116,6 +110,9 @@ function getCompMove() { // using minimax algo
     gameboard[move.r][move.c].slotElement.style.backgroundColor = COLOURS[currentPlayer]
     slotCounter++
     currentPlayer = (currentPlayer + 1) % 2
+    var condition = checkWin()
+    if (condition != 'RED' && condition != 'BLUE' && condition != 'TIE') off("")
+    else gameOver(condition)
 }
 
 function minimax() {
@@ -124,6 +121,13 @@ function minimax() {
 
 function isEmpty(row, col) {
     return data[row][col] == ""
+}
+
+function gameOver(condition) {
+    if (condition == 'RED' || condition == 'BLUE') displayWin(condition)
+    if (condition == 'TIE') displayTie()
+    on()
+    window.setTimeout(off("RESTART"), 1500);
 }
 
 function checkWin() {
@@ -170,14 +174,16 @@ function removeElements() {
 }
 
 function resetGame() {
-    data = [[], [], [], [], []]
+    data = [['', '', ''], ['', '', ''], ['', '', ''], ['', '', ''], ['', '', '']]
     currentPlayer = (SCORES[0] + SCORES[1]) % 2
     slotCounter = 0
-    humanPlayer = (humanPlayer + 1) % 2
     removeElements()
     createBoard()
     displayText()
     document.getElementById("overlay").style.display = "none";
+    if (currentPlayer != humanPlayer) {
+        // alert("bot")
+    }
 }
 
 function stopProp(event) {
@@ -188,6 +194,7 @@ function on() {
     document.getElementById("overlay").style.display = "block";
 }
 
-function off() {
+function off(type) {
     document.getElementById("overlay").style.display = "none";
+    if (type == "RESTART") resetGame()
 }
